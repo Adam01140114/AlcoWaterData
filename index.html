@@ -705,19 +705,18 @@
         const btn = document.createElement("button");
         btn.className = "flex items-center gap-2 rounded-2xl px-3 py-2 text-sm ring-1 ring-slate-200 dark:ring-slate-700 bg-white/70 dark:bg-slate-900/40";
          
-         // Get current month's reading for this location
+         // Get today's reading for this location
          const now = new Date();
-         const currentMonth = now.getMonth();
-         const currentYear = now.getFullYear();
+         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
          
-         const currentMonthReading = allDocs.find(doc => {
+         const todayReading = allDocs.find(doc => {
            const docDate = new Date(doc.date);
+           const docDay = new Date(docDate.getFullYear(), docDate.getMonth(), docDate.getDate());
            return doc.location === ds.label && 
-                  docDate.getMonth() === currentMonth && 
-                  docDate.getFullYear() === currentYear;
+                  docDay.getTime() === today.getTime();
          });
          
-         const readingText = currentMonthReading ? `    ‎ ‎ ‎ <strong>(${currentMonthReading.value})</strong>` : '';
+         const readingText = todayReading ? `    ‎ ‎ ‎ <strong>(${todayReading.value})</strong>` : '';
          
         btn.innerHTML = `
           <span class="inline-block h-3 w-3 rounded-full" style="background:${ds.borderColor}"></span>
