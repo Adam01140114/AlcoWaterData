@@ -26,7 +26,7 @@
     <!-- Community Selection Screen -->
     <div id="communitySelection" class="min-h-screen flex flex-col items-center justify-center">
       <header class="text-center mb-12">
-        <h1 class="text-4xl font-bold tracking-tight text-slate-800 dark:text-slate-200 mb-4">Water Meter Management</h1>
+        <h1 class="text-4xl font-bold tracking-tight text-slate-800 dark:text-slate-200 mb-4">Alco Water Data Management</h1>
         <p class="text-lg text-slate-600 dark:text-slate-400">Select a community to manage water meter readings</p>
     </header>
 
@@ -130,18 +130,18 @@
         </div>
       </div>
 
-      <div class="relative">
+      <div class="relative hidden">
         <canvas id="readsChart" height="220" class="!h-[48vh] sm:!h-[42vh]"></canvas>
       </div>
 
       <!-- Legend -->
-      <div id="legend" class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3"></div>
+      <div id="legend" class="mt-4 grid grid-cols-1 gap-2"></div>
 
       <!-- Action buttons live UNDER the graph -->
       <div class="mt-5 space-y-3">
         <button id="addBtn"
           class="w-full rounded-2xl bg-indigo-600 px-4 py-3 text-white font-semibold shadow hover:bg-indigo-500 active:scale-[0.99]">
-          Add Water Meter Data
+          Add Data
         </button>
         <button id="editLocationBtn"
           class="w-full rounded-2xl bg-purple-600 px-4 py-3 text-white font-semibold shadow hover:bg-purple-500 active:scale-[0.99]">
@@ -149,15 +149,7 @@
         </button>
         <button id="exportBtn"
           class="w-full rounded-2xl bg-emerald-600 px-4 py-3 text-white font-semibold shadow hover:bg-emerald-500 active:scale-[0.99]">
-          Export data
-        </button>
-        <button id="clearBtn"
-          class="w-full rounded-2xl bg-red-600 px-4 py-3 text-white font-semibold shadow hover:bg-red-500 active:scale-[0.99]">
-          Clear all data
-        </button>
-        <button id="toggleGraphBtn"
-          class="w-full rounded-2xl bg-gray-600 px-4 py-3 text-white font-semibold shadow hover:bg-gray-500 active:scale-[0.99] hidden">
-          Hide Graph
+          Data Management & Export
         </button>
       </div>
     </section>
@@ -269,45 +261,77 @@
   <!-- Month Selection Modal -->
   <div id="modalMonthSelect" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center">
     <div data-backdrop class="absolute inset-0 bg-black/50"></div>
-    <div class="relative w-full sm:max-w-md sm:rounded-3xl sm:shadow-xl sm:ring-1 sm:ring-black/10
-                bg-white dark:bg-slate-900 rounded-t-3xl p-5 sm:p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold">Select Month to Export</h3>
+    <div class="relative w-full sm:max-w-4xl sm:rounded-3xl sm:shadow-xl sm:ring-1 sm:ring-black/10
+                bg-white dark:bg-slate-900 rounded-t-3xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-semibold">Data Management & Export</h3>
         <button data-close class="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-800">
           <span aria-hidden="true">✕</span>
         </button>
       </div>
-      <form id="monthSelectForm" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Select Month:
-          </label>
-          <select id="monthSelect" class="w-full rounded-2xl border border-slate-300 dark:border-slate-600 
-                        bg-white dark:bg-slate-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 
-                        focus:ring-blue-500 focus:border-transparent">
-            <option value="0">January</option>
-            <option value="1">February</option>
-            <option value="2">March</option>
-            <option value="3">April</option>
-            <option value="4">May</option>
-            <option value="5">June</option>
-            <option value="6">July</option>
-            <option value="7">August</option>
-            <option value="8">September</option>
-            <option value="9">October</option>
-            <option value="10">November</option>
-            <option value="11">December</option>
-          </select>
+      
+      <!-- Chart Section -->
+      <div class="mb-6 hidden" id="chartSectionModal">
+        <div class="flex items-center justify-center mb-4">
+          <h4 class="text-lg font-medium text-slate-800 dark:text-slate-200">Data Visualization</h4>
         </div>
-        <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
-          <div id="monthSelectMsg" class="text-sm"></div>
-          <button type="submit" id="exportMonthBtn"
-            class="rounded-2xl bg-emerald-600 px-4 py-2 text-white font-semibold shadow hover:bg-emerald-500 
-                   active:scale-[0.99] disabled:opacity-60">
-            Export Data
+        <div id="chartContainerModal" class="relative">
+          <canvas id="readsChartModal" height="300" class="!h-[40vh] w-full"></canvas>
+        </div>
+      </div>
+
+      <!-- Export Section -->
+      <div class="mb-6">
+        <h4 class="text-lg font-medium text-slate-800 dark:text-slate-200 mb-4">Export Data</h4>
+        <form id="monthSelectForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Select Month:
+            </label>
+            <select id="monthSelect" class="w-full rounded-2xl border border-slate-300 dark:border-slate-600 
+                          bg-white dark:bg-slate-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 
+                          focus:ring-emerald-500 focus:border-transparent">
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
+            </select>
+          </div>
+          <div class="flex flex-col items-center pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
+            <div id="monthSelectMsg" class="text-sm"></div>
+            <button type="button" id="toggleGraphBtnModal"
+              class="rounded-2xl bg-gray-600 px-6 py-2 text-white font-semibold shadow hover:bg-gray-500 active:scale-[0.99]">
+              Show Graph
+            </button>
+            <button type="submit" id="exportMonthBtn"
+              class="rounded-2xl bg-emerald-600 px-6 py-2 text-white font-semibold shadow hover:bg-emerald-500 
+                     active:scale-[0.99] disabled:opacity-60">
+              Export Data
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Data Management Section -->
+      <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
+        <div class="space-y-3">
+          <button id="clearBtnModal"
+            class="w-full rounded-2xl bg-red-600 px-4 py-3 text-white font-semibold shadow hover:bg-red-500 active:scale-[0.99] disabled:opacity-60">
+            Clear All Data
           </button>
+          <p class="text-xs text-slate-500 dark:text-slate-400 text-center">
+            This will permanently delete all location data and meter readings for this community.
+          </p>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -320,6 +344,9 @@
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold">Edit Location Data</h3>
         <div class="flex items-center gap-2">
+          <button id="addNewLocationBtn" class="rounded-xl bg-green-600 px-3 py-2 text-white text-sm font-medium shadow hover:bg-green-500 active:scale-[0.99]">
+            Add New Location
+          </button>
           <input type="file" id="importJsonFile" accept=".json" class="hidden" />
           <button id="importJsonBtn" class="rounded-xl bg-blue-600 px-3 py-2 text-white text-sm font-medium shadow hover:bg-blue-500 active:scale-[0.99]">
             Import JSON
@@ -330,12 +357,71 @@
         </div>
       </div>
 
+      <!-- Add New Location Form (Hidden by default) -->
+      <div id="addNewLocationForm" class="hidden mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-200 dark:border-green-800">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="font-semibold text-green-800 dark:text-green-200">Add New Location</h4>
+          <button id="cancelNewLocationBtn" class="rounded-lg bg-slate-500 px-3 py-1 text-white text-xs font-medium shadow hover:bg-slate-600 active:scale-[0.98]">
+            Cancel
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Location Name *</label>
+            <input type="text" id="newLocationName" placeholder="Enter location name" required
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Lot</label>
+            <input type="text" id="newLocationLot" placeholder="Enter lot number"
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Owner</label>
+            <input type="text" id="newLocationOwner" placeholder="Enter owner name"
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Address</label>
+            <input type="text" id="newLocationAddress" placeholder="Enter address"
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Meter #</label>
+            <input type="text" id="newLocationMeterNumber" placeholder="Enter meter number"
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Last Read</label>
+            <input type="number" step="any" id="newLocationLastRead" placeholder="Enter last read value"
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Unit</label>
+            <input type="text" id="newLocationUnit" placeholder="Enter unit type"
+                   class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div id="newLocationMsg" class="text-sm"></div>
+          <button id="saveNewLocationBtn" class="rounded-xl bg-green-600 px-4 py-2 text-white text-sm font-medium shadow hover:bg-green-500 active:scale-[0.99] disabled:opacity-60">
+            Create Location
+          </button>
+        </div>
+      </div>
+
       <div id="locationList" class="space-y-4">
         <!-- Locations will be populated here -->
       </div>
 
       <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
-        <div id="editLocationMsg" class="text-sm"></div>
+        <div class="flex items-center gap-2">
+          <button id="deleteAllLocationsBtn"
+            class="rounded-2xl bg-red-600 px-4 py-2 text-white font-semibold shadow hover:bg-red-500 active:scale-[0.99] disabled:opacity-60">
+            Delete All Location Data
+          </button>
+          <div id="editLocationMsg" class="text-sm"></div>
+        </div>
         <button id="saveLocationBtn"
           class="rounded-2xl bg-purple-600 px-4 py-2 text-white font-semibold shadow hover:bg-purple-500 active:scale-[0.99] disabled:opacity-60">
           Save All Changes
@@ -459,15 +545,15 @@
      const communitySection = document.getElementById("communitySection");
      const communityCards = document.querySelectorAll(".community-card");
      
-     const modalAdd         = document.getElementById("modalAdd");
-     const modalExport      = document.getElementById("modalExport");
-     const modalMonthSelect = document.getElementById("modalMonthSelect");
-     const modalEditLocation = document.getElementById("modalEditLocation");
-     const addBtn           = document.getElementById("addBtn");
-     const exportBtn        = document.getElementById("exportBtn");
-     const clearBtn         = document.getElementById("clearBtn");
-     const editLocationBtn  = document.getElementById("editLocationBtn");
-     const toggleGraphBtn   = document.getElementById("toggleGraphBtn");
+    const modalAdd         = document.getElementById("modalAdd");
+    const modalExport      = document.getElementById("modalExport");
+    const modalMonthSelect = document.getElementById("modalMonthSelect");
+    const modalEditLocation = document.getElementById("modalEditLocation");
+    const addBtn           = document.getElementById("addBtn");
+    const exportBtn        = document.getElementById("exportBtn");
+    const clearBtnModal    = document.getElementById("clearBtnModal");
+    const editLocationBtn  = document.getElementById("editLocationBtn");
+    const toggleGraphBtnModal = document.getElementById("toggleGraphBtnModal");
 
     const rangeSelect  = document.getElementById("rangeSelect");
     const emptyState   = document.getElementById("emptyState");
@@ -496,6 +582,19 @@
     const locationList     = document.getElementById("locationList");
     const editLocationMsg  = document.getElementById("editLocationMsg");
     const saveLocationBtn  = document.getElementById("saveLocationBtn");
+    const deleteAllLocationsBtn = document.getElementById("deleteAllLocationsBtn");
+    const addNewLocationBtn = document.getElementById("addNewLocationBtn");
+    const addNewLocationForm = document.getElementById("addNewLocationForm");
+    const cancelNewLocationBtn = document.getElementById("cancelNewLocationBtn");
+    const saveNewLocationBtn = document.getElementById("saveNewLocationBtn");
+    const newLocationMsg = document.getElementById("newLocationMsg");
+    const newLocationName = document.getElementById("newLocationName");
+    const newLocationLot = document.getElementById("newLocationLot");
+    const newLocationOwner = document.getElementById("newLocationOwner");
+    const newLocationAddress = document.getElementById("newLocationAddress");
+    const newLocationMeterNumber = document.getElementById("newLocationMeterNumber");
+    const newLocationLastRead = document.getElementById("newLocationLastRead");
+    const newLocationUnit = document.getElementById("newLocationUnit");
     const importJsonFile   = document.getElementById("importJsonFile");
     const importJsonBtn    = document.getElementById("importJsonBtn");
     
@@ -537,52 +636,34 @@
     });
     editLocationBtn.addEventListener("click", () => { 
       editLocationModalCtl.show(); 
-      populateLocationEditList(); 
+      populateLocationEditList();
+      // Hide the add new location form when opening the modal
+      addNewLocationForm.classList.add("hidden");
+      clearNewLocationForm();
     });
     
-    // Toggle graph visibility
-    let graphHidden = true; // Start with graph hidden by default
-    console.log("🔍 Setting up toggle graph button...");
-    console.log("🔍 Toggle button element:", toggleGraphBtn);
+    // Toggle graph visibility in modal
+    let graphHiddenModal = true; // Start with graph hidden in modal
     
-    // Hide graph on page load
-    const chartCanvas = document.getElementById('readsChart');
-    const chartContainer = chartCanvas.parentElement;
-    chartContainer.style.display = 'none';
-    toggleGraphBtn.textContent = 'Show Graph';
-    toggleGraphBtn.className = 'w-full rounded-2xl bg-green-600 px-4 py-3 text-white font-semibold shadow hover:bg-green-500 active:scale-[0.99]';
-    console.log("🔍 Graph hidden by default on page load");
-    
-    toggleGraphBtn.addEventListener("click", () => {
-      console.log("🔍 Toggle graph button clicked!");
-      graphHidden = !graphHidden;
-      console.log("🔍 Graph hidden state:", graphHidden);
+    toggleGraphBtnModal.addEventListener("click", () => {
+      graphHiddenModal = !graphHiddenModal;
       
-      const chartCanvas = document.getElementById('readsChart');
-      console.log("🔍 Chart canvas element:", chartCanvas);
-      const chartContainer = chartCanvas.parentElement; // Get the div containing the canvas
-      console.log("🔍 Chart container element:", chartContainer);
+      const chartSectionModal = document.getElementById('chartSectionModal');
       
-      if (graphHidden) {
-        console.log("🔍 Hiding chart...");
-        chartContainer.style.display = 'none';
-        toggleGraphBtn.textContent = 'Show Graph';
-        toggleGraphBtn.className = 'w-full rounded-2xl bg-green-600 px-4 py-3 text-white font-semibold shadow hover:bg-green-500 active:scale-[0.99]';
-        console.log("✅ Chart hidden");
+      if (graphHiddenModal) {
+        chartSectionModal.classList.add('hidden');
+        toggleGraphBtnModal.textContent = 'Show Graph';
+        toggleGraphBtnModal.className = 'rounded-2xl bg-gray-600 px-6 py-2 text-white font-semibold shadow hover:bg-gray-500 active:scale-[0.99]';
       } else {
-        console.log("🔍 Showing chart...");
-        chartContainer.style.display = 'block';
-        toggleGraphBtn.textContent = 'Hide Graph';
-        toggleGraphBtn.className = 'w-full rounded-2xl bg-gray-600 px-4 py-3 text-white font-semibold shadow hover:bg-gray-500 active:scale-[0.99]';
+        chartSectionModal.classList.remove('hidden');
+        toggleGraphBtnModal.textContent = 'Hide Graph';
+        toggleGraphBtnModal.className = 'rounded-2xl bg-green-600 px-6 py-2 text-white font-semibold shadow hover:bg-green-500 active:scale-[0.99]';
         // Redraw chart when showing
-        if (window.chart) {
-          window.chart.resize();
+        if (window.chartModal) {
+          window.chartModal.resize();
         }
-        console.log("✅ Chart shown");
       }
     });
-    
-    console.log("✅ Toggle graph button setup complete");
     
     // JSON Import button - show paste modal instead of file picker
     importJsonBtn.addEventListener("click", () => {
@@ -591,13 +672,18 @@
     });
     
     // Clear all data functionality
-    clearBtn.addEventListener("click", async () => {
-      if (!confirm("Are you sure you want to clear ALL data? This action cannot be undone.")) {
+    clearBtnModal.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to clear ALL data? This will delete all locations and all associated meter readings. This action cannot be undone.")) {
         return;
       }
       
-      clearBtn.disabled = true;
-      clearBtn.textContent = "Clearing...";
+      // Double confirmation for this destructive action
+      if (!confirm("This will permanently delete everything. Are you absolutely sure?")) {
+        return;
+      }
+      
+      clearBtnModal.disabled = true;
+      clearBtnModal.textContent = "Clearing...";
       
        try {
          // Get all reads and delete them
@@ -610,30 +696,30 @@
          const locationDeletePromises = locationsSnapshot.docs.map(docSnap => deleteDoc(docSnap.ref));
          await Promise.all(locationDeletePromises);
         
-        clearBtn.textContent = "Cleared!";
+        clearBtnModal.textContent = "Cleared!";
         setTimeout(() => {
-          clearBtn.textContent = "Clear all data";
-          clearBtn.disabled = false;
+          clearBtnModal.textContent = "Clear All Data";
+          clearBtnModal.disabled = false;
         }, 1500);
         
       } catch (err) {
         console.error("Error clearing data:", err);
-        clearBtn.textContent = "Error - try again";
+        clearBtnModal.textContent = "Error - try again";
         setTimeout(() => {
-          clearBtn.textContent = "Clear all data";
-          clearBtn.disabled = false;
+          clearBtnModal.textContent = "Clear All Data";
+          clearBtnModal.disabled = false;
         }, 2000);
       }
     });
 
-    [addModalCtl, exportModalCtl, editLocationModalCtl, jsonPasteModalCtl, overwriteModalCtl].forEach(m => {
+    [addModalCtl, exportModalCtl, monthSelectModalCtl, editLocationModalCtl, jsonPasteModalCtl, overwriteModalCtl].forEach(m => {
       if (m && m.backdrop && m.closeBtn) {
       m.backdrop.addEventListener("click", m.hide);
       m.closeBtn.addEventListener("click", m.hide);
       }
     });
     window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") { addModalCtl.hide(); exportModalCtl.hide(); editLocationModalCtl.hide(); jsonPasteModalCtl.hide(); overwriteModalCtl.hide(); }
+      if (e.key === "Escape") { addModalCtl.hide(); exportModalCtl.hide(); monthSelectModalCtl.hide(); editLocationModalCtl.hide(); jsonPasteModalCtl.hide(); overwriteModalCtl.hide(); }
     });
 
     // Default date = today (ensure it's always set)
@@ -698,33 +784,110 @@
       }
     });
 
+    // Create modal chart
+    const ctxModal = document.getElementById("readsChartModal").getContext("2d");
+    let chartModal = new Chart(ctxModal, {
+      type: "line",
+      data: { datasets: [] },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "nearest", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const d = ctx.raw;
+                return `${ctx.dataset.label}: ${d.y} on ${new Date(d.x).toLocaleDateString()}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { 
+            type: "time", 
+            time: { unit: "day" }, 
+            ticks: { 
+              maxRotation: 0, 
+              autoSkipPadding: 12,
+              display: true,
+              minRotation: 0
+            },
+            display: true,
+            grid: {
+              color: "rgba(0,0,0,0.1)",
+              drawBorder: false
+            }
+          },
+          y: { 
+            title: { display: true, text: "Meter Read" }, 
+            beginAtZero: true,
+            grid: {
+              color: "rgba(0,0,0,0.1)",
+              drawBorder: false
+            }
+          }
+        }
+      }
+    });
+
+    // Store modal chart globally
+    window.chartModal = chartModal;
+
     const legendEl = document.getElementById("legend");
+    let currentFilteredDocs = []; // Store the currently filtered docs
+    
     const renderLegend = () => {
+      console.log("🔄 renderLegend called");
+      console.log("🔍 Chart datasets:", chart.data.datasets.map(ds => ds.label));
+      console.log("🔍 All docs:", allDocs.map(d => ({ location: d.location, date: d.date, value: d.value })));
+      
       legendEl.innerHTML = "";
-      chart.data.datasets.forEach((ds, i) => {
+      
+      // Get all unique locations from allDocs (not just chart datasets)
+      const allLocations = [...new Set(allDocs.map(doc => doc.location))];
+      console.log("🔍 All unique locations:", allLocations);
+      
+      // Create legend items for all locations, not just those in chart datasets
+      allLocations.forEach((location, i) => {
         const btn = document.createElement("button");
         btn.className = "flex items-center gap-2 rounded-2xl px-3 py-2 text-sm ring-1 ring-slate-200 dark:ring-slate-700 bg-white/70 dark:bg-slate-900/40";
          
-         // Get today's reading for this location
+         // Get today's reading for this location from ALL docs
          const now = new Date();
          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
          
          const todayReading = allDocs.find(doc => {
            const docDate = new Date(doc.date);
-           const docDay = new Date(docDate.getFullYear(), docDate.getMonth(), docDate.getDate());
-           return doc.location === ds.label && 
-                  docDay.getTime() === today.getTime();
+           // Use UTC methods to avoid timezone issues
+           const docDay = new Date(Date.UTC(docDate.getUTCFullYear(), docDate.getUTCMonth(), docDate.getUTCDate()));
+           const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+           const isMatch = doc.location === location && 
+                  docDay.getTime() === todayUTC.getTime();
+           
+           if (doc.location === location) {
+             console.log(`🔍 Checking ${location}: docDate=${docDate}, docDay=${docDay}, todayUTC=${todayUTC}, isMatch=${isMatch}`);
+           }
+           
+           return isMatch;
          });
+         
+         console.log(`🔍 Today's reading for ${location}:`, todayReading);
          
          const readingText = todayReading ? `    ‎ ‎ ‎ <strong>(${todayReading.value})</strong>` : '';
          
+         // Get color from chart dataset if it exists, otherwise use default color
+         const chartDataset = chart.data.datasets.find(ds => ds.label === location);
+         const color = chartDataset ? chartDataset.borderColor : colorFor(i);
+         
         btn.innerHTML = `
-          <span class="inline-block h-3 w-3 rounded-full" style="background:${ds.borderColor}"></span>
-           <span>${ds.label}${readingText}</span>
+          <span class="inline-block h-3 w-3 rounded-full" style="background:${color}"></span>
+           <span>${location}${readingText}</span>
         `;
         btn.onclick = () => {
            // Open add data modal with this location pre-selected
-           locationSelect.value = ds.label;
+           locationSelect.value = location;
            setTodayDate(); // Always set to today when opening modal
            addModalCtl.show();
            setTimeout(() => locationSelect.focus(), 0);
@@ -765,14 +928,9 @@
      }
 
      function loadCommunityData(communityId) {
-       console.log("🔄 loadCommunityData called for community:", communityId);
-       
        // Update Firebase references for this community
        const communityReadsRef = collection(db, `communities/${communityId}/reads`);
        const communityLocationsRef = collection(db, `communities/${communityId}/locations`);
-       
-       console.log("🔍 Community reads ref:", communityReadsRef);
-       console.log("🔍 Community locations ref:", communityLocationsRef);
        
        // Update global references
        window.currentReadsRef = communityReadsRef;
@@ -781,7 +939,6 @@
        // Clear existing data
        allDocs = [];
        allLocations = [];
-       console.log("🔍 Cleared existing data, allLocations now:", allLocations);
        
        // Load new data
        loadCommunityReads(communityReadsRef);
@@ -807,13 +964,9 @@
      }
 
      function loadCommunityLocations(locationsRef) {
-       console.log("🔄 loadCommunityLocations called with ref:", locationsRef);
        const qLocations = query(locationsRef, orderBy("name", "asc"));
        onSnapshot(qLocations, (snap) => {
-         console.log("🔍 Firebase snapshot received, docs count:", snap.docs.length);
-         console.log("🔍 Snapshot docs:", snap.docs.map(d => ({ id: d.id, ...d.data() })));
          allLocations = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-         console.log("🔍 Updated allLocations from Firebase:", allLocations);
          populateLocationSelects();
          // Also refresh edit list if it's open
          if (!modalEditLocation.classList.contains('hidden')) {
@@ -847,16 +1000,25 @@
 
     function regroupAndRender(docs) {
       const byLocation = new Map();
+      
+      // Group by location and date, keeping only the most recent reading for each day
       docs.forEach(d => {
         const { location, date, value } = d;
-        if (!byLocation.has(location)) byLocation.set(location, []);
-        byLocation.get(location).push({ x: date, y: value });
+        const dateKey = new Date(date).toDateString(); // Use date string as key
+        
+        if (!byLocation.has(location)) byLocation.set(location, new Map());
+        
+        const locationData = byLocation.get(location);
+        if (!locationData.has(dateKey) || new Date(d.date) > new Date(locationData.get(dateKey).x)) {
+          locationData.set(dateKey, { x: date, y: value });
+        }
       });
 
       const datasets = [];
       let i = 0;
-      for (const [location, points] of byLocation.entries()) {
-        points.sort((a, b) => a.x - b.x);
+      for (const [location, dateMap] of byLocation.entries()) {
+        // Convert Map values to array and sort by date
+        const points = Array.from(dateMap.values()).sort((a, b) => a.x - b.x);
         datasets.push({
           label: location,
           data: points,
@@ -872,6 +1034,11 @@
 
       chart.data.datasets = datasets;
       chart.update();
+      
+      // Update modal chart with same data
+      chartModal.data.datasets = datasets;
+      chartModal.update();
+      
       renderLegend();
 
       emptyState.classList.toggle("hidden", docs.length > 0);
@@ -895,41 +1062,30 @@
     }
 
     function populateLocationSelects() {
-       console.log("🔄 populateLocationSelects called");
-       console.log("🔍 Current allLocations:", allLocations);
-       console.log("🔍 allLocations.length:", allLocations.length);
-       
       // For Add form
       const customValue = "__custom__";
       const opts = [];
       if (allLocations.length === 0) {
         opts.push(new Option("Add custom location…", customValue));
-         console.log("🔍 No locations found, adding custom option only");
       } else {
         opts.push(new Option("Select location…", "", true, true));
          allLocations.forEach(l => {
-           console.log("🔍 Adding location to dropdown:", l.name);
            opts.push(new Option(l.name, l.name));
          });
         opts.push(new Option("Add custom location…", customValue));
-         console.log("🔍 Added all locations plus custom option");
       }
        
-       console.log("🔍 Options for locationSelect:", opts.map(o => `${o.value}: ${o.text}`));
       locationSelect.innerHTML = "";
       opts.forEach(o => locationSelect.add(o));
-       console.log("🔍 LocationSelect options after population:", Array.from(locationSelect.options).map(o => `${o.value}: ${o.text}`));
 
       // For Export form
       const expOpts = [new Option("All locations", "__all__", true, true)];
       allLocations.forEach(l => expOpts.push(new Option(l.name, l.name)));
       exportLocation.innerHTML = "";
       expOpts.forEach(o => exportLocation.add(o));
-       console.log("🔍 ExportLocation options after population:", Array.from(exportLocation.options).map(o => `${o.value}: ${o.text}`));
 
       // Toggle custom input visibility if needed
       toggleCustomLocation(locationSelect.value === customValue);
-       console.log("✅ populateLocationSelects completed");
     }
 
     function toggleCustomLocation(show) {
@@ -995,15 +1151,13 @@
 
      // Process form submission (shared logic)
      async function processFormSubmission(formData, isOverwrite = false) {
-       console.log("🔍 processFormSubmission called with formData:", formData);
       formMsg.textContent = "";
       saveBtn.disabled = true;
 
       try {
          let location = formData.location;
-         console.log("🔍 Processing location:", location);
         
-         if (!location) {
+        if (!location) {
           throw new Error("Please select a location.");
         }
 
@@ -1014,7 +1168,8 @@
         }
 
         const [y, m, d] = dateStr.split("-").map(Number);
-        const jsDate = new Date(y, m - 1, d, 12, 0, 0);
+        // Create date in UTC to avoid timezone issues
+        const jsDate = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
 
          if (isOverwrite && formData.existingData) {
            // Update existing document
@@ -1038,15 +1193,13 @@
          formMsg.textContent = isOverwrite ? "Updated!" : "Saved!";
          
          // Force refresh location selects and edit list
-         console.log("🔄 Setting timeout to refresh UI...");
          setTimeout(() => {
-           console.log("🔄 Timeout executed, refreshing UI...");
-           console.log("🔍 Current allLocations before refresh:", allLocations.map(l => l.name));
            populateLocationSelects();
            if (!modalEditLocation.classList.contains('hidden')) {
-             console.log("🔄 Edit location modal is open, refreshing edit list...");
              populateLocationEditList();
            }
+           // Force re-render the legend to show today's reading
+           renderLegend();
          }, 100);
          
          setTimeout(() => { addModalCtl.hide(); readForm.reset(); setTodayDate(); }, 350);
@@ -1063,16 +1216,11 @@
      // ----- Add form -----
      readForm.addEventListener("submit", async (e) => {
        e.preventDefault();
-       console.log("🔍 Form submitted");
-       console.log("🔍 locationSelect.value:", locationSelect.value);
-       console.log("🔍 customLocationInput.value:", customLocationInput.value);
        
        // Determine final location and handle custom location creation
        let location = locationSelect.value;
        if (location === "__custom__") {
-         console.log("🔍 Custom location path taken");
          const custom = (customLocationInput.value || "").trim();
-         console.log("🔍 Custom location trimmed:", custom);
          if (!custom) {
            formMsg.className = "text-sm text-rose-600";
            formMsg.textContent = "Please enter a custom location name.";
@@ -1081,11 +1229,7 @@
          location = custom;
          
          // Create the custom location in Firebase
-         console.log("🔍 Creating custom location in Firebase...");
          const id = slugify(location);
-         console.log("🔍 Generated ID for custom location:", id);
-         console.log("🔍 Current community:", currentCommunity);
-         console.log("🔍 Current locations ref:", window.currentLocationsRef);
          
          const newLocation = { 
            id: id,
@@ -1098,28 +1242,20 @@
            lastRead: "",
            unit: ""
          };
-         console.log("🔍 New location object:", newLocation);
          
          await setDoc(doc(window.currentLocationsRef, id), newLocation, { merge: true });
-         console.log("✅ Custom location saved to Firebase");
          
          // Immediately add to local array for instant UI update
-         console.log("🔍 All locations before adding:", allLocations.map(l => l.name));
          allLocations.push(newLocation);
          allLocations.sort((a, b) => a.name.localeCompare(b.name));
-         console.log("🔍 All locations after adding:", allLocations.map(l => l.name));
          
          // Immediately refresh the dropdown
-         console.log("🔄 Refreshing location selects...");
          populateLocationSelects();
-         console.log("✅ Location selects refreshed");
        } else if (!location) {
          formMsg.className = "text-sm text-rose-600";
          formMsg.textContent = "Please select a location.";
          return;
        }
-       
-       console.log("🔍 Final location determined:", location);
 
       const value = Number(inputValue.value);
       const dateStr = inputDate.value;
@@ -1130,16 +1266,13 @@
       }
 
        // Check for duplicate
-       console.log("🔍 Checking for duplicate for location:", location);
        const existingData = await checkForDuplicate(location, dateStr);
        if (existingData) {
-         console.log("🔍 Duplicate found, showing overwrite modal");
          showOverwriteModal(location, dateStr, existingData);
          return;
        }
 
        // No duplicate, proceed with normal submission
-       console.log("🔍 No duplicate, proceeding with form submission");
        await processFormSubmission({ location, value, date: dateStr });
     });
 
@@ -1569,6 +1702,139 @@
         editLocationMsg.textContent = `Failed to delete "${locationName}". Please try again.`;
       }
     }
+
+    // Add new location functionality
+    addNewLocationBtn.addEventListener("click", () => {
+      addNewLocationForm.classList.remove("hidden");
+      newLocationName.focus();
+    });
+
+    cancelNewLocationBtn.addEventListener("click", () => {
+      addNewLocationForm.classList.add("hidden");
+      clearNewLocationForm();
+    });
+
+    function clearNewLocationForm() {
+      newLocationName.value = "";
+      newLocationLot.value = "";
+      newLocationOwner.value = "";
+      newLocationAddress.value = "";
+      newLocationMeterNumber.value = "";
+      newLocationLastRead.value = "";
+      newLocationUnit.value = "";
+      newLocationMsg.textContent = "";
+    }
+
+    saveNewLocationBtn.addEventListener("click", async () => {
+      const locationName = newLocationName.value.trim();
+      
+      if (!locationName) {
+        newLocationMsg.className = "text-sm text-rose-600";
+        newLocationMsg.textContent = "Location name is required.";
+        return;
+      }
+
+      // Check if location already exists
+      const existingLocation = allLocations.find(loc => loc.name.toLowerCase() === locationName.toLowerCase());
+      if (existingLocation) {
+        newLocationMsg.className = "text-sm text-rose-600";
+        newLocationMsg.textContent = "A location with this name already exists.";
+        return;
+      }
+
+      saveNewLocationBtn.disabled = true;
+      saveNewLocationBtn.textContent = "Creating...";
+      newLocationMsg.textContent = "";
+
+      try {
+        const id = slugify(locationName);
+        const newLocation = {
+          id: id,
+          name: locationName,
+          lot: newLocationLot.value.trim(),
+          owner: newLocationOwner.value.trim(),
+          address: newLocationAddress.value.trim(),
+          meterNumber: newLocationMeterNumber.value.trim(),
+          lastRead: newLocationLastRead.value.trim(),
+          unit: newLocationUnit.value.trim(),
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+
+        await setDoc(doc(window.currentLocationsRef, id), newLocation, { merge: true });
+
+        // Add to local array for immediate UI update
+        allLocations.push(newLocation);
+        allLocations.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Refresh the location list and selects
+        populateLocationEditList();
+        populateLocationSelects();
+
+        newLocationMsg.className = "text-sm text-emerald-600";
+        newLocationMsg.textContent = `Successfully created "${locationName}"!`;
+
+        // Clear form and hide it after a short delay
+        setTimeout(() => {
+          addNewLocationForm.classList.add("hidden");
+          clearNewLocationForm();
+        }, 1500);
+
+      } catch (err) {
+        console.error("Error creating new location:", err);
+        newLocationMsg.className = "text-sm text-rose-600";
+        newLocationMsg.textContent = "Failed to create location. Please try again.";
+      }
+
+      saveNewLocationBtn.disabled = false;
+      saveNewLocationBtn.textContent = "Create Location";
+    });
+
+    // Delete all locations functionality
+    deleteAllLocationsBtn.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to delete ALL location data? This will delete all locations and all associated meter readings. This action cannot be undone.")) {
+        return;
+      }
+      
+      // Double confirmation for this destructive action
+      if (!confirm("This will permanently delete everything. Are you absolutely sure?")) {
+        return;
+      }
+      
+      deleteAllLocationsBtn.disabled = true;
+      deleteAllLocationsBtn.textContent = "Deleting...";
+      editLocationMsg.textContent = "";
+      
+      try {
+        // Get all reads and delete them
+        const readsSnapshot = await getDocs(window.currentReadsRef);
+        const deleteReadsPromises = readsSnapshot.docs.map(docSnap => deleteDoc(docSnap.ref));
+        await Promise.all(deleteReadsPromises);
+        
+        // Get all locations and delete them
+        const locationsSnapshot = await getDocs(window.currentLocationsRef);
+        const deleteLocationsPromises = locationsSnapshot.docs.map(docSnap => deleteDoc(docSnap.ref));
+        await Promise.all(deleteLocationsPromises);
+        
+        // Refresh the location list
+        populateLocationEditList();
+        
+        editLocationMsg.className = "text-sm text-emerald-600";
+        editLocationMsg.textContent = "Successfully deleted all location data and meter readings.";
+        
+        setTimeout(() => {
+          editLocationMsg.textContent = "";
+        }, 3000);
+        
+      } catch (err) {
+        console.error("Error deleting all location data:", err);
+        editLocationMsg.className = "text-sm text-rose-600";
+        editLocationMsg.textContent = "Failed to delete all data. Please try again.";
+      }
+      
+      deleteAllLocationsBtn.disabled = false;
+      deleteAllLocationsBtn.textContent = "Delete All Location Data";
+    });
 
     // Save location changes
     saveLocationBtn.addEventListener("click", async () => {

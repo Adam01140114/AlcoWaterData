@@ -1,0 +1,83 @@
+[
+  {
+    "name": "County",
+    "lot": "001",
+    "owner": "Johnson, Michael R.",
+    "address": "1245 County Road",
+    "meterNumber": "WM-2024-001",
+    "lastRead": "1847.5",
+    "unit": "gallons"
+  },
+  {
+    "name": "Kilbreth",
+    "lot": "002",
+    "owner": "Martinez, Sofia Elena",
+    "address": "3892 Kilbreth Avenue",
+    "meterNumber": "WM-2024-002",
+    "lastRead": "2156.8",
+    "unit": "gallons"
+  },
+  {
+    "name": "Alisal",
+    "lot": "003",
+    "owner": "Thompson, David J.",
+    "address": "567 Alisal Street",
+    "meterNumber": "WM-2024-003",
+    "lastRead": "1923.2",
+    "unit": "gallons"
+  },
+  {
+    "name": "Santana",
+    "lot": "004",
+    "owner": "Rodriguez, Carmen M.",
+    "address": "2134 Santana Boulevard",
+    "meterNumber": "WM-2024-004",
+    "lastRead": "2089.7",
+    "unit": "gallons"
+  },
+  {
+    "name": "Hemingway",
+    "lot": "005",
+    "owner": "Wilson, Robert A.",
+    "address": "789 Hemingway Drive",
+    "meterNumber": "WM-2024-005",
+    "lastRead": "1756.3",
+    "unit": "gallons"
+  },
+  {
+    "name": "Rosehart",
+    "lot": "006",
+    "owner": "Chen, Linda Wei",
+    "address": "21885 Rosehart Way",
+    "meterNumber": "WM-2024-006",
+    "lastRead": "2234.9",
+    "unit": "gallons"
+  },
+  {
+    "name": "Verona",
+    "lot": "007",
+    "owner": "Anderson, Patricia L.",
+    "address": "456 Verona Circle",
+    "meterNumber": "WM-2024-007",
+    "lastRead": "1892.4",
+    "unit": "gallons"
+  },
+  {
+    "name": "Boronda",
+    "lot": "008",
+    "owner": "Garcia, Francisco J.",
+    "address": "1678 Boronda Lane",
+    "meterNumber": "WM-2024-008",
+    "lastRead": "2012.6",
+    "unit": "gallons"
+  },
+  {
+    "name": "Las Casitas",
+    "lot": "009",
+    "owner": "Brown, Jennifer K.",
+    "address": "3421 Las Casitas Court",
+    "meterNumber": "WM-2024-009",
+    "lastRead": "1678.1",
+    "unit": "gallons"
+  }
+]
