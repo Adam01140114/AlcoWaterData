@@ -979,16 +979,29 @@
          const now = new Date();
          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
          
+         console.log(`🔍 Bold check for ${location}:`);
+         console.log(`🔍 Current time: ${now.toDateString()} (${now.getFullYear()}-${now.getMonth()}-${now.getDate()})`);
+         console.log(`🔍 Today date: ${today.toDateString()} (${today.getFullYear()}-${today.getMonth()}-${today.getDate()})`);
+         
          const todayReading = allDocs.find(doc => {
            const docDate = new Date(doc.date);
-           // Use UTC methods to avoid timezone issues
-           const docDay = new Date(Date.UTC(docDate.getUTCFullYear(), docDate.getUTCMonth(), docDate.getUTCDate()));
-           const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+           // Use local time methods to match how dates are stored
+           const docDay = new Date(docDate.getFullYear(), docDate.getMonth(), docDate.getDate());
+           const todayLocal = new Date(today.getFullYear(), today.getMonth(), today.getDate());
            const isMatch = doc.location === location && 
-                  docDay.getTime() === todayUTC.getTime();
+                  docDay.getTime() === todayLocal.getTime();
+           
+           if (doc.location === location) {
+             console.log(`🔍 Checking doc: ${doc.location} on ${docDate.toDateString()} (${docDate.getFullYear()}-${docDate.getMonth()}-${docDate.getDate()})`);
+             console.log(`🔍 Doc day: ${docDay.toDateString()} (${docDay.getFullYear()}-${docDay.getMonth()}-${docDay.getDate()})`);
+             console.log(`🔍 Today local: ${todayLocal.toDateString()} (${todayLocal.getFullYear()}-${todayLocal.getMonth()}-${todayLocal.getDate()})`);
+             console.log(`🔍 Times: docDay=${docDay.getTime()}, todayLocal=${todayLocal.getTime()}, isMatch=${isMatch}`);
+           }
            
            return isMatch;
          });
+         
+         console.log(`🔍 Today's reading for ${location}:`, todayReading ? `${todayReading.value} on ${new Date(todayReading.date).toDateString()}` : 'none');
          
          const readingText = todayReading ? `    ‎ ‎ ‎ <strong>(${todayReading.value})</strong>` : '';
          
