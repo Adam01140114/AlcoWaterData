@@ -271,7 +271,7 @@
       </div>
       
       <!-- Chart Section -->
-      <div class="mb-6 hidden" id="chartSectionModal">
+      <div class="mb-6" id="chartSectionModal">
         <div class="flex items-center justify-center mb-4">
           <h4 class="text-lg font-medium text-slate-800 dark:text-slate-200">Data Visualization</h4>
         </div>
@@ -314,8 +314,8 @@
           <div class="flex flex-col items-center pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
             <div id="monthSelectMsg" class="text-sm"></div>
             <button type="button" id="toggleGraphBtnModal"
-              class="rounded-2xl bg-gray-600 px-6 py-2 text-white font-semibold shadow hover:bg-gray-500 active:scale-[0.99]">
-              Show Graph
+              class="rounded-2xl bg-green-600 px-6 py-2 text-white font-semibold shadow hover:bg-green-500 active:scale-[0.99]">
+              Hide Graph
             </button>
             <button type="submit" id="exportMonthBtn"
               class="rounded-2xl bg-emerald-600 px-6 py-2 text-white font-semibold shadow hover:bg-emerald-500 
@@ -328,14 +328,38 @@
 
       <!-- Data Management Section -->
       <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
-        <div class="space-y-3">
-          <button id="clearBtnModal"
-            class="w-full rounded-2xl bg-red-600 px-4 py-3 text-white font-semibold shadow hover:bg-red-500 active:scale-[0.99] disabled:opacity-60">
-            Clear All Data
-          </button>
-          <p class="text-xs text-slate-500 dark:text-slate-400 text-center">
-            This will permanently delete all location data and meter readings for this community.
-          </p>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Bold Points Trigger:
+            </label>
+            <select id="boldPointsTrigger" class="w-full rounded-2xl border border-slate-300 dark:border-slate-600 
+                          bg-white dark:bg-slate-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 
+                          focus:ring-emerald-500 focus:border-transparent">
+              <option value="daily">Daily - Show bold for today's readings</option>
+              <option value="monthly">Monthly - Show bold for this month's readings</option>
+            </select>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Controls when data points appear in bold in the legend
+            </p>
+          </div>
+          <div class="space-y-3">
+            <button id="saveSettingsBtn"
+              class="w-full rounded-2xl bg-blue-600 px-4 py-3 text-white font-semibold shadow hover:bg-blue-500 active:scale-[0.99] disabled:opacity-60">
+              Save Settings
+            </button>
+            <button id="exportDataBtn"
+              class="w-full rounded-2xl bg-emerald-600 px-4 py-3 text-white font-semibold shadow hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60">
+              Export Data
+            </button>
+            <button id="clearBtnModal"
+              class="w-full rounded-2xl bg-red-600 px-4 py-3 text-white font-semibold shadow hover:bg-red-500 active:scale-[0.99] disabled:opacity-60">
+              Clear All Data
+            </button>
+            <p class="text-xs text-slate-500 dark:text-slate-400 text-center">
+              This will permanently delete all location data and meter readings for this community.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -495,9 +519,9 @@
         </h3>
         
         <p class="text-sm text-slate-600 dark:text-slate-400 mb-6">
-          There's already a meter reading for <span id="overwriteLocationName" class="font-semibold"></span> on <span id="overwriteMonthYear" class="font-semibold"></span>.
+          There's already a data point for <span id="overwriteLocationName" class="font-semibold"></span> on <span id="overwriteMonthYear" class="font-semibold"></span>.
           <br><br>
-          Would you like to overwrite the existing data?
+          Would you like to overwrite it?
         </p>
 
         <div class="flex gap-3 justify-center">
@@ -512,12 +536,57 @@
     </div>
   </div>
 
+  <!-- Email Export Modal -->
+  <div id="modalEmailExport" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center">
+    <div data-backdrop class="absolute inset-0 bg-black/50"></div>
+
+    <div class="relative w-full sm:max-w-md sm:rounded-3xl sm:shadow-xl sm:ring-1 sm:ring-black/10
+                bg-white dark:bg-slate-900 rounded-t-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold">Email Export</h3>
+        <button data-close class="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <span aria-hidden="true">✕</span>
+        </button>
+      </div>
+
+      <form id="emailExportForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Email Address:
+          </label>
+          <input type="email" id="exportEmail" required
+                 class="w-full rounded-2xl border border-slate-300 dark:border-slate-600 
+                        bg-white dark:bg-slate-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 
+                        focus:ring-emerald-500 focus:border-transparent"
+                 placeholder="Enter your email address" />
+        </div>
+        
+        <div class="flex items-center justify-between pt-2">
+          <div id="emailExportMsg" class="text-sm"></div>
+          <div class="flex gap-2">
+            <button type="button" id="cancelEmailExportBtn" 
+                    class="rounded-xl bg-slate-500 px-4 py-2 text-white text-sm font-medium shadow hover:bg-slate-400 active:scale-[0.99]">
+              Cancel
+            </button>
+            <button type="submit" id="sendEmailBtn"
+                    class="rounded-xl bg-emerald-600 px-4 py-2 text-white text-sm font-medium shadow hover:bg-emerald-500 
+                           active:scale-[0.99] disabled:opacity-60">
+              Send Email
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0"></script>
   <!-- SheetJS for Excel export -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://unpkg.com/xlsx-populate/browser/xlsx-populate.min.js"></script>
+  <!-- EmailJS -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <!-- Firebase (modular SDK via ESM) -->
   <script type="module">
@@ -527,6 +596,9 @@
       getFirestore, collection, addDoc, onSnapshot, setDoc, doc,
       query, orderBy, serverTimestamp, Timestamp, deleteDoc, getDocs, where
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import {
+      getStorage, ref, uploadBytes, getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDezCeJ2_MZehQ6rO1gn3EBL-FhrbOHDhs",
@@ -540,9 +612,15 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     const readsRef = collection(db, "reads");
     const locationsRef = collection(db, "locations");
+    const preferencesRef = collection(db, "preferences");
+
+    // ----- EmailJS Setup -----
+    // Initialize EmailJS with your credentials
+    emailjs.init("j0Aw4p5_3T8L15Zfn");
 
     // ----- UI Elements -----
      const communitySelection = document.getElementById("communitySelection");
@@ -584,6 +662,9 @@
     const monthSelect     = document.getElementById("monthSelect");
     const monthSelectMsg  = document.getElementById("monthSelectMsg");
     const exportMonthBtn  = document.getElementById("exportMonthBtn");
+    const boldPointsTrigger = document.getElementById("boldPointsTrigger");
+    const saveSettingsBtn = document.getElementById("saveSettingsBtn");
+    const exportDataBtn = document.getElementById("exportDataBtn");
 
     const locationList     = document.getElementById("locationList");
     const editLocationMsg  = document.getElementById("editLocationMsg");
@@ -615,6 +696,13 @@
     const overwriteMonthYear = document.getElementById("overwriteMonthYear");
     const cancelOverwriteBtn = document.getElementById("cancelOverwriteBtn");
     const confirmOverwriteBtn = document.getElementById("confirmOverwriteBtn");
+    
+    const modalEmailExport = document.getElementById("modalEmailExport");
+    const emailExportForm = document.getElementById("emailExportForm");
+    const exportEmail = document.getElementById("exportEmail");
+    const emailExportMsg = document.getElementById("emailExportMsg");
+    const cancelEmailExportBtn = document.getElementById("cancelEmailExportBtn");
+    const sendEmailBtn = document.getElementById("sendEmailBtn");
 
     // ----- Modal helpers -----
     function bindModal(el) {
@@ -630,6 +718,7 @@
     const editLocationModalCtl = bindModal(modalEditLocation);
     const jsonPasteModalCtl = bindModal(modalJsonPaste);
     const overwriteModalCtl = bindModal(modalOverwrite);
+    const emailExportModalCtl = bindModal(modalEmailExport);
 
     addBtn.addEventListener("click", () => { 
       setTodayDate(); // Always set to today when opening modal
@@ -637,7 +726,7 @@
       setTimeout(() => locationSelect.focus(), 0); 
     });
     exportBtn.addEventListener("click", () => {
-      // Show month selection modal instead of auto-export
+      // Show month selection modal instead of email modal
       showMonthSelectionModal();
     });
     editLocationBtn.addEventListener("click", () => { 
@@ -649,7 +738,7 @@
     });
     
     // Toggle graph visibility in modal
-    let graphHiddenModal = true; // Start with graph hidden in modal
+    let graphHiddenModal = false; // Start with graph shown in modal
     
     toggleGraphBtnModal.addEventListener("click", () => {
       graphHiddenModal = !graphHiddenModal;
@@ -718,14 +807,14 @@
       }
     });
 
-    [addModalCtl, exportModalCtl, monthSelectModalCtl, editLocationModalCtl, jsonPasteModalCtl, overwriteModalCtl].forEach(m => {
+    [addModalCtl, exportModalCtl, monthSelectModalCtl, editLocationModalCtl, jsonPasteModalCtl, overwriteModalCtl, emailExportModalCtl].forEach(m => {
       if (m && m.backdrop && m.closeBtn) {
       m.backdrop.addEventListener("click", m.hide);
       m.closeBtn.addEventListener("click", m.hide);
       }
     });
     window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") { addModalCtl.hide(); exportModalCtl.hide(); monthSelectModalCtl.hide(); editLocationModalCtl.hide(); jsonPasteModalCtl.hide(); overwriteModalCtl.hide(); }
+      if (e.key === "Escape") { addModalCtl.hide(); exportModalCtl.hide(); monthSelectModalCtl.hide(); editLocationModalCtl.hide(); jsonPasteModalCtl.hide(); overwriteModalCtl.hide(); emailExportModalCtl.hide(); }
     });
 
     // Default date = today (ensure it's always set in California time)
@@ -967,43 +1056,49 @@
     const renderLegend = () => {
       legendEl.innerHTML = "";
       
-      // Get all unique locations from allDocs (not just chart datasets)
-      const allLocations = [...new Set(allDocs.map(doc => doc.location))];
+      // Get all unique locations from allDocs (not just chart datasets) and sort alphabetically
+      const allLocations = [...new Set(allDocs.map(doc => doc.location))].sort((a, b) => a.localeCompare(b));
       
       // Create legend items for all locations, not just those in chart datasets
       allLocations.forEach((location, i) => {
         const btn = document.createElement("button");
         btn.className = "flex items-center gap-2 rounded-2xl px-3 py-2 text-sm ring-1 ring-slate-200 dark:ring-slate-700 bg-white/70 dark:bg-slate-900/40";
          
-         // Get today's reading for this location from ALL docs
+         // Get recent reading for this location from ALL docs based on trigger setting
          const now = new Date();
-         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+         let recentReading = null;
          
-         console.log(`🔍 Bold check for ${location}:`);
-         console.log(`🔍 Current time: ${now.toDateString()} (${now.getFullYear()}-${now.getMonth()}-${now.getDate()})`);
-         console.log(`🔍 Today date: ${today.toDateString()} (${today.getFullYear()}-${today.getMonth()}-${today.getDate()})`);
-         
-         const todayReading = allDocs.find(doc => {
-           const docDate = new Date(doc.date);
-           // Use local time methods to match how dates are stored
-           const docDay = new Date(docDate.getFullYear(), docDate.getMonth(), docDate.getDate());
-           const todayLocal = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-           const isMatch = doc.location === location && 
-                  docDay.getTime() === todayLocal.getTime();
+         if (boldPointsTriggerSetting === "daily") {
+           // Show bold for today's readings
+           const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
            
-           if (doc.location === location) {
-             console.log(`🔍 Checking doc: ${doc.location} on ${docDate.toDateString()} (${docDate.getFullYear()}-${docDate.getMonth()}-${docDate.getDate()})`);
-             console.log(`🔍 Doc day: ${docDay.toDateString()} (${docDay.getFullYear()}-${docDay.getMonth()}-${docDay.getDate()})`);
-             console.log(`🔍 Today local: ${todayLocal.toDateString()} (${todayLocal.getFullYear()}-${todayLocal.getMonth()}-${todayLocal.getDate()})`);
-             console.log(`🔍 Times: docDay=${docDay.getTime()}, todayLocal=${todayLocal.getTime()}, isMatch=${isMatch}`);
+           recentReading = allDocs.find(doc => {
+             const docDate = new Date(doc.date);
+             const docDay = new Date(docDate.getFullYear(), docDate.getMonth(), docDate.getDate());
+             const todayLocal = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+             return doc.location === location && docDay.getTime() === todayLocal.getTime();
+           });
+         } else if (boldPointsTriggerSetting === "monthly") {
+           // Show bold for this month's readings (most recent in current month)
+           const currentMonth = now.getMonth();
+           const currentYear = now.getFullYear();
+           
+           const monthReadings = allDocs.filter(doc => {
+             const docDate = new Date(doc.date);
+             return doc.location === location && 
+                    docDate.getMonth() === currentMonth && 
+                    docDate.getFullYear() === currentYear;
+           });
+           
+           if (monthReadings.length > 0) {
+             // Get the most recent reading from this month
+             recentReading = monthReadings.reduce((latest, current) => {
+               return new Date(current.date) > new Date(latest.date) ? current : latest;
+             });
            }
-           
-           return isMatch;
-         });
+         }
          
-         console.log(`🔍 Today's reading for ${location}:`, todayReading ? `${todayReading.value} on ${new Date(todayReading.date).toDateString()}` : 'none');
-         
-         const readingText = todayReading ? `    ‎ ‎ ‎ <strong>(${todayReading.value})</strong>` : '';
+         const readingText = recentReading ? `    ‎ ‎ ‎ <strong>(${recentReading.value} on ${new Date(recentReading.date).toLocaleDateString()})</strong>` : '';
          
          // Get color from chart dataset if it exists, otherwise use default color
          const chartDataset = chart.data.datasets.find(ds => ds.label === location);
@@ -1071,6 +1166,7 @@
        // Load new data
        loadCommunityReads(communityReadsRef);
        loadCommunityLocations(communityLocationsRef);
+       loadCommunityPreferences(communityId);
      }
 
      function loadCommunityReads(readsRef) {
@@ -1104,6 +1200,43 @@
        });
      }
 
+     function loadCommunityPreferences(communityId) {
+       const communityPreferencesRef = collection(db, `communities/${communityId}/preferences`);
+       const qPreferences = query(communityPreferencesRef);
+       
+       onSnapshot(qPreferences, (snap) => {
+         if (!snap.empty) {
+           const preferences = snap.docs[0].data();
+           boldPointsTriggerSetting = preferences.boldPointsTrigger || "daily";
+           boldPointsTrigger.value = boldPointsTriggerSetting;
+         } else {
+           // Set default if no preferences exist
+           boldPointsTriggerSetting = "daily";
+           boldPointsTrigger.value = "daily";
+         }
+         // Refresh the legend to apply the new setting
+         renderLegend();
+       });
+     }
+
+     async function saveBoldPointsTrigger(communityId, triggerValue) {
+       try {
+         const communityPreferencesRef = collection(db, `communities/${communityId}/preferences`);
+         const preferencesDoc = doc(communityPreferencesRef, "settings");
+         
+         await setDoc(preferencesDoc, {
+           boldPointsTrigger: triggerValue,
+           updatedAt: serverTimestamp()
+         }, { merge: true });
+         
+         boldPointsTriggerSetting = triggerValue;
+         // Refresh the legend to apply the new setting
+         renderLegend();
+       } catch (err) {
+         console.error("Error saving bold points trigger preference:", err);
+       }
+     }
+
      // Community card event listeners
      communityCards.forEach(card => {
        card.addEventListener("click", () => {
@@ -1118,6 +1251,7 @@
     // ----- Data state -----
     let allDocs = [];
      let allLocations = []; // array of { id, name, lot, owner, address, meterNumber, lastRead, unit }
+     let boldPointsTriggerSetting = "daily"; // Default to daily
 
     function withinRange(date, days) {
       if (days === "all") return true;
@@ -1154,7 +1288,7 @@
           borderColor: colorFor(i),
           backgroundColor: colorFor(i) + "22",
           borderWidth: 2,
-          pointRadius: 3,
+          pointRadius: 8,
           tension: 0.25,
           fill: false
         });
@@ -1179,6 +1313,46 @@
     }
 
     rangeSelect.addEventListener("change", (e) => applyRange(e.target.value));
+
+    // Bold points trigger change event
+    boldPointsTrigger.addEventListener("change", (e) => {
+      if (currentCommunity) {
+        saveBoldPointsTrigger(currentCommunity, e.target.value);
+      }
+    });
+
+    // Save settings button event
+    saveSettingsBtn.addEventListener("click", async () => {
+      if (currentCommunity) {
+        saveSettingsBtn.disabled = true;
+        saveSettingsBtn.textContent = "Saving...";
+        
+        try {
+          // Save the current bold points trigger setting
+          await saveBoldPointsTrigger(currentCommunity, boldPointsTrigger.value);
+          
+          saveSettingsBtn.textContent = "Saved!";
+          setTimeout(() => {
+            saveSettingsBtn.textContent = "Save Settings";
+            saveSettingsBtn.disabled = false;
+          }, 1500);
+        } catch (err) {
+          console.error("Error saving settings:", err);
+          saveSettingsBtn.textContent = "Error - try again";
+          setTimeout(() => {
+            saveSettingsBtn.textContent = "Save Settings";
+            saveSettingsBtn.disabled = false;
+          }, 2000);
+        }
+      }
+    });
+
+    // Export data button event
+    exportDataBtn.addEventListener("click", () => {
+      // Show email export modal
+      emailExportModalCtl.show();
+      setTimeout(() => exportEmail.focus(), 0);
+    });
 
     // ----- Firestore listeners -----
      // Note: Firebase listeners are now handled per-community in loadCommunityData()
@@ -1233,16 +1407,31 @@
       const [year, month, day] = date.split("-").map(Number);
       const jsDate = new Date(year, month - 1, day, 12, 0, 0);
       
-      // Check if there's already data for this location on this exact day
-      const existingReads = allDocs.filter(doc => {
-        const docDate = new Date(doc.date);
-        const isMatch = doc.location === location && 
-               docDate.getFullYear() === year && 
-               docDate.getMonth() === month - 1 &&
-               docDate.getDate() === day;
-        
-        return isMatch;
-      });
+      let existingReads = [];
+      
+      if (boldPointsTriggerSetting === "daily") {
+        // Check if there's already data for this location on this exact day
+        existingReads = allDocs.filter(doc => {
+          const docDate = new Date(doc.date);
+          const isMatch = doc.location === location && 
+                 docDate.getFullYear() === year && 
+                 docDate.getMonth() === month - 1 &&
+                 docDate.getDate() === day;
+          
+          return isMatch;
+        });
+      } else if (boldPointsTriggerSetting === "monthly") {
+        // Check if there's already data for this location in this month
+        existingReads = allDocs.filter(doc => {
+          const docDate = new Date(doc.date);
+          const isMatch = doc.location === location && 
+                 docDate.getFullYear() === year && 
+                 docDate.getMonth() === month - 1;
+          
+          return isMatch;
+        });
+      }
+      
       return existingReads.length > 0 ? existingReads[0] : null;
     }
 
@@ -1250,10 +1439,16 @@
       // Parse date string correctly to avoid timezone issues (same as duplicate check)
       const [year, month, day] = date.split("-").map(Number);
       const jsDate = new Date(year, month - 1, day, 12, 0, 0);
-      const dayDate = jsDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      
+      let displayDate;
+      if (boldPointsTriggerSetting === "daily") {
+        displayDate = jsDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      } else if (boldPointsTriggerSetting === "monthly") {
+        displayDate = jsDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      }
       
       overwriteLocationName.textContent = location;
-      overwriteMonthYear.textContent = dayDate;
+      overwriteMonthYear.textContent = displayDate;
       
       // Store the form data for later use
       window.pendingFormData = {
@@ -1512,6 +1707,47 @@
       exportMonthBtn.disabled = false;
     });
 
+    // Email export form
+    emailExportForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      emailExportMsg.textContent = "";
+      sendEmailBtn.disabled = true;
+      sendEmailBtn.textContent = "Sending...";
+
+      try {
+        const email = exportEmail.value.trim();
+        if (!email) {
+          throw new Error("Please enter an email address.");
+        }
+
+        // Generate Excel file and send via email
+        await sendExcelViaEmail(email);
+        
+        emailExportMsg.className = "text-sm text-emerald-600";
+        emailExportMsg.textContent = "Email sent and file downloaded successfully!";
+        
+        setTimeout(() => {
+          emailExportModalCtl.hide();
+          emailExportMsg.textContent = "";
+          exportEmail.value = "";
+        }, 1500);
+        
+      } catch (err) {
+        emailExportMsg.className = "text-sm text-rose-600";
+        emailExportMsg.textContent = err.message || "Failed to send email.";
+      }
+
+      sendEmailBtn.disabled = false;
+      sendEmailBtn.textContent = "Send Email";
+    });
+
+    // Cancel email export
+    cancelEmailExportBtn.addEventListener("click", () => {
+      emailExportModalCtl.hide();
+      exportEmail.value = "";
+      emailExportMsg.textContent = "";
+    });
+
     // --- Styled Excel export (xlsx-populate) ---
     async function exportStyledXlsx({ rows, filename, title = "Meter Reads" }) {
       const X = window.XlsxPopulate;                         // from the script tag
@@ -1728,6 +1964,133 @@
       }
     }
 
+    // ----- Email Export Function -----
+    async function sendExcelViaEmail(email) {
+      try {
+        // Generate Excel file data
+        const now = new Date();
+        const currentMon = now.getMonth();
+        const currentYear = now.getFullYear();
+        const monthName = now.toLocaleDateString('en-US', { month: 'long' });
+
+        // Get all data for current month
+        const monthReads = allDocs.filter(doc => {
+          const d = new Date(doc.date);
+          return d.getMonth() === currentMon && d.getFullYear() === currentYear;
+        });
+
+        // Group readings by date
+        const readingsByDate = new Map();
+        monthReads.forEach(read => {
+          const dateKey = read.date.toISOString().slice(0, 10);
+          if (!readingsByDate.has(dateKey)) {
+            readingsByDate.set(dateKey, new Map());
+          }
+          readingsByDate.get(dateKey).set(read.location, read.value);
+        });
+
+        // Define the location columns
+        const locationColumns = ['County', 'Kilbreth', 'Hemingway', '1st Avenue', 'DSS across from 21885 Rosehart Way'];
+        
+        // Create rows for each day in the month
+        const rows = [];
+        const daysInMonth = new Date(currentYear, currentMon + 1, 0).getDate();
+        
+        for (let day = 1; day <= daysInMonth; day++) {
+          const date = new Date(currentYear, currentMon, day);
+          const dateKey = date.toISOString().slice(0, 10);
+          const dayReadings = readingsByDate.get(dateKey) || new Map();
+          
+          const row = {
+            'Date': `${currentMon + 1}/${day}/${currentYear}`
+          };
+          
+          // Add values for each location column
+          locationColumns.forEach(location => {
+            row[location] = dayReadings.get(location) || '';
+          });
+          
+          rows.push(row);
+        }
+
+        // Generate Excel file
+        const X = window.XlsxPopulate;
+        const wb = await X.fromBlankAsync();
+        const sheet = wb.sheet(0).name("MeterReads");
+
+        // Build headers from row keys
+        const headers = rows.length ? Object.keys(rows[0]) : ["Date","Location","Meter Read"];
+        const HEADER_ROW = 1, START_COL = 1;
+
+        // Write header row
+        headers.forEach((h, i) => sheet.cell(HEADER_ROW, START_COL + i).value(h));
+
+        // Write body rows
+        rows.forEach((r, ri) => {
+          headers.forEach((h, ci) => sheet.cell(HEADER_ROW + 1 + ri, START_COL + ci).value(r[h] ?? ""));
+        });
+
+        // Basic formatting
+        const lastRow = HEADER_ROW + rows.length;
+        const lastCol = START_COL + headers.length - 1;
+
+        // Header styling
+        sheet.range(HEADER_ROW, START_COL, HEADER_ROW, lastCol).style({
+          bold: true,
+          fontSize: 11,
+          fill: "2D5A27",
+          fontColor: "FFFFFF",
+          horizontalAlignment: "center"
+        });
+
+        // Generate file as blob
+        const blob = await wb.outputAsync();
+        
+        // Download the file locally first
+        const downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = `water_meter_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // Upload to Firebase Storage
+        const filename = `water_meter_reads_${monthName.toLowerCase()}_${currentYear}_${Date.now()}.xlsx`;
+        const storageRef = ref(storage, `exports/${filename}`);
+        await uploadBytes(storageRef, blob);
+        
+        // Get download URL
+        const downloadURL = await getDownloadURL(storageRef);
+        
+        // Prepare email template parameters
+        const templateParams = {
+          to_email: email,
+          from_name: "Alco Water Data Management",
+          subject: `Water Meter Reads - ${monthName} ${currentYear}`,
+          message: `Your water meter reads data for ${monthName} ${currentYear} is ready for download.`,
+          month: monthName,
+          year: currentYear,
+          download_url: downloadURL,
+          filename: `water_meter_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`,
+          reply_to: email,
+          from_email: "alcowatertimesheet@gmail.com"
+        };
+
+        // Send email using EmailJS
+        const result = await emailjs.send(
+          "service_pgd0ulp",
+          "template_3zlto2t",
+          templateParams
+        );
+
+        console.log("Email sent successfully:", result);
+        
+      } catch (error) {
+        console.error("Error sending email:", error);
+        throw new Error("Failed to send email. Please try again.");
+      }
+    }
+
     // ----- Location Edit Functions -----
     function populateLocationEditList() {
       locationList.innerHTML = "";
@@ -1742,7 +2105,12 @@
         locationCard.className = "bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700";
         locationCard.innerHTML = `
           <div class="flex items-center justify-between mb-3">
-            <h4 class="font-semibold text-slate-800 dark:text-slate-200">${location.name}</h4>
+            <div class="flex-1 mr-3">
+              <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Location Name</label>
+              <input type="text" data-location-id="${location.id}" data-field="name" 
+                     value="${location.name}" placeholder="Enter location name"
+                     class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
             <div class="flex items-center gap-2">
               <span class="text-xs text-slate-500 dark:text-slate-400">ID: ${location.id}</span>
               <button class="delete-location-btn rounded-lg bg-red-500 px-3 py-1 text-white text-xs font-medium shadow hover:bg-red-600 active:scale-[0.98]" 
@@ -1977,6 +2345,7 @@
       try {
         const inputs = locationList.querySelectorAll("input[data-location-id]");
         const updates = {};
+        const nameChanges = {}; // Track location name changes
 
         // Group inputs by location ID
         inputs.forEach(input => {
@@ -1988,6 +2357,14 @@
             updates[locationId] = {};
           }
           updates[locationId][field] = value || "";
+
+          // Track name changes for updating meter readings
+          if (field === "name") {
+            const originalLocation = allLocations.find(loc => loc.id === locationId);
+            if (originalLocation && originalLocation.name !== value) {
+              nameChanges[originalLocation.name] = value;
+            }
+          }
         });
 
          // Update each location in Firebase
@@ -1999,6 +2376,30 @@
          });
 
         await Promise.all(updatePromises);
+
+        // Update meter readings for location name changes
+        if (Object.keys(nameChanges).length > 0) {
+          const readUpdatePromises = [];
+          
+          for (const [oldName, newName] of Object.entries(nameChanges)) {
+            // Find all meter readings with the old location name
+            const readsToUpdate = allDocs.filter(doc => doc.location === oldName);
+            
+            // Update each meter reading
+            for (const readDoc of readsToUpdate) {
+              readUpdatePromises.push(
+                setDoc(doc(window.currentReadsRef, readDoc.id), {
+                  location: newName,
+                  updatedAt: serverTimestamp()
+                }, { merge: true })
+              );
+            }
+          }
+          
+          if (readUpdatePromises.length > 0) {
+            await Promise.all(readUpdatePromises);
+          }
+        }
 
         editLocationMsg.className = "text-sm text-emerald-600";
         editLocationMsg.textContent = "All changes saved successfully!";
