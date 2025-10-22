@@ -195,7 +195,7 @@
           </div>
 
           <div>
-            <label class="block text-sm mb-1" for="value">Meter Read</label>
+            <label id="valueLabel" class="block text-sm mb-1" for="value">Meter Read</label>
             <input id="value" type="number" required step="any" min="0" placeholder="e.g., 1278.3"
                    class="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-white/80 dark:bg-slate-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
@@ -1135,6 +1135,24 @@
        // Update the community section title
        const titleElement = communitySection.querySelector("h1");
        titleElement.textContent = communityName;
+       
+       // Update the form label based on community
+       const valueLabel = document.getElementById("valueLabel");
+       if (valueLabel) {
+         switch(communityId) {
+           case "residual":
+             valueLabel.textContent = "Residual Read";
+             break;
+           case "water-level":
+             valueLabel.textContent = "Water Level Read";
+             break;
+           case "meter-read":
+             valueLabel.textContent = "Meter Read";
+             break;
+           default:
+             valueLabel.textContent = "Meter Read";
+         }
+       }
        
        // Show dashboard, hide selection
        communitySelection.classList.add("hidden");
