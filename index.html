@@ -311,15 +311,25 @@
               <option value="11">December</option>
             </select>
           </div>
-          <div class="flex flex-col items-center pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
-            <div id="monthSelectMsg" class="text-sm"></div>
-            <button type="button" id="toggleGraphBtnModal"
-              class="rounded-2xl bg-green-600 px-6 py-2 text-white font-semibold shadow hover:bg-green-500 active:scale-[0.99]">
-              Hide Graph
-            </button>
-            <button type="submit" id="exportMonthBtn"
-              class="rounded-2xl bg-emerald-600 px-6 py-2 text-white font-semibold shadow hover:bg-emerald-500 
-                     active:scale-[0.99] disabled:opacity-60">
+          
+          <!-- Excel Preview Section -->
+          <div id="excelPreviewContainer" class="mt-4">
+            <div class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Preview:</div>
+            <div class="overflow-x-auto border border-slate-300 dark:border-slate-600 rounded-lg max-h-96 overflow-y-auto">
+              <table id="excelPreviewTable" class="min-w-full text-sm">
+                <thead id="excelPreviewHeader" class="bg-emerald-700 text-white sticky top-0">
+                  <!-- Headers will be populated by JavaScript -->
+                </thead>
+                <tbody id="excelPreviewBody" class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                  <!-- Rows will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+            <div id="monthSelectMsg" class="text-sm mb-3"></div>
+            <button id="exportDataBtn"
+              class="w-full rounded-2xl bg-emerald-600 px-4 py-3 text-white font-semibold shadow hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60">
               Export Data
             </button>
           </div>
@@ -344,14 +354,6 @@
             </p>
           </div>
           <div class="space-y-3">
-            <button id="saveSettingsBtn"
-              class="w-full rounded-2xl bg-blue-600 px-4 py-3 text-white font-semibold shadow hover:bg-blue-500 active:scale-[0.99] disabled:opacity-60">
-              Save Settings
-            </button>
-            <button id="exportDataBtn"
-              class="w-full rounded-2xl bg-emerald-600 px-4 py-3 text-white font-semibold shadow hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60">
-              Export Data
-            </button>
             <button id="clearBtnModal"
               class="w-full rounded-2xl bg-red-600 px-4 py-3 text-white font-semibold shadow hover:bg-red-500 active:scale-[0.99] disabled:opacity-60">
               Clear All Data
@@ -561,17 +563,21 @@
                  placeholder="Enter your email address" />
         </div>
         
-        <div class="flex items-center justify-between pt-2">
-          <div id="emailExportMsg" class="text-sm"></div>
-          <div class="flex gap-2">
-            <button type="button" id="cancelEmailExportBtn" 
-                    class="rounded-xl bg-slate-500 px-4 py-2 text-white text-sm font-medium shadow hover:bg-slate-400 active:scale-[0.99]">
-              Cancel
+        <div class="pt-2">
+          <div id="emailExportMsg" class="text-sm mb-4"></div>
+          <div class="flex flex-col items-center gap-3">
+            <button type="button" id="downloadEmailExportBtn" 
+                    class="w-full rounded-xl bg-blue-600 px-4 py-2 text-white text-sm font-medium shadow hover:bg-blue-500 active:scale-[0.99]">
+              Download
             </button>
             <button type="submit" id="sendEmailBtn"
-                    class="rounded-xl bg-emerald-600 px-4 py-2 text-white text-sm font-medium shadow hover:bg-emerald-500 
+                    class="w-full rounded-xl bg-emerald-600 px-4 py-2 text-white text-sm font-medium shadow hover:bg-emerald-500 
                            active:scale-[0.99] disabled:opacity-60">
               Send Email
+            </button>
+            <button type="button" id="cancelEmailExportBtn" 
+                    class="w-full rounded-xl bg-slate-500 px-4 py-2 text-white text-sm font-medium shadow hover:bg-slate-400 active:scale-[0.99]">
+              Cancel
             </button>
           </div>
         </div>
@@ -637,7 +643,6 @@
     const exportBtn        = document.getElementById("exportBtn");
     const clearBtnModal    = document.getElementById("clearBtnModal");
     const editLocationBtn  = document.getElementById("editLocationBtn");
-    const toggleGraphBtnModal = document.getElementById("toggleGraphBtnModal");
 
     const rangeSelect  = document.getElementById("rangeSelect");
     const emptyState   = document.getElementById("emptyState");
@@ -661,9 +666,7 @@
     const monthSelectForm = document.getElementById("monthSelectForm");
     const monthSelect     = document.getElementById("monthSelect");
     const monthSelectMsg  = document.getElementById("monthSelectMsg");
-    const exportMonthBtn  = document.getElementById("exportMonthBtn");
     const boldPointsTrigger = document.getElementById("boldPointsTrigger");
-    const saveSettingsBtn = document.getElementById("saveSettingsBtn");
     const exportDataBtn = document.getElementById("exportDataBtn");
 
     const locationList     = document.getElementById("locationList");
@@ -703,6 +706,7 @@
     const emailExportMsg = document.getElementById("emailExportMsg");
     const cancelEmailExportBtn = document.getElementById("cancelEmailExportBtn");
     const sendEmailBtn = document.getElementById("sendEmailBtn");
+    const downloadEmailExportBtn = document.getElementById("downloadEmailExportBtn");
 
     // ----- Modal helpers -----
     function bindModal(el) {
@@ -737,28 +741,6 @@
       clearNewLocationForm();
     });
     
-    // Toggle graph visibility in modal
-    let graphHiddenModal = false; // Start with graph shown in modal
-    
-    toggleGraphBtnModal.addEventListener("click", () => {
-      graphHiddenModal = !graphHiddenModal;
-      
-      const chartSectionModal = document.getElementById('chartSectionModal');
-      
-      if (graphHiddenModal) {
-        chartSectionModal.classList.add('hidden');
-        toggleGraphBtnModal.textContent = 'Show Graph';
-        toggleGraphBtnModal.className = 'rounded-2xl bg-gray-600 px-6 py-2 text-white font-semibold shadow hover:bg-gray-500 active:scale-[0.99]';
-      } else {
-        chartSectionModal.classList.remove('hidden');
-        toggleGraphBtnModal.textContent = 'Hide Graph';
-        toggleGraphBtnModal.className = 'rounded-2xl bg-green-600 px-6 py-2 text-white font-semibold shadow hover:bg-green-500 active:scale-[0.99]';
-        // Redraw chart when showing
-        if (window.chartModal) {
-          window.chartModal.resize();
-        }
-      }
-    });
     
     // JSON Import button - show paste modal instead of file picker
     importJsonBtn.addEventListener("click", () => {
@@ -1332,36 +1314,10 @@
 
     rangeSelect.addEventListener("change", (e) => applyRange(e.target.value));
 
-    // Bold points trigger change event
+    // Bold points trigger change event - automatically saves when changed
     boldPointsTrigger.addEventListener("change", (e) => {
       if (currentCommunity) {
         saveBoldPointsTrigger(currentCommunity, e.target.value);
-      }
-    });
-
-    // Save settings button event
-    saveSettingsBtn.addEventListener("click", async () => {
-      if (currentCommunity) {
-        saveSettingsBtn.disabled = true;
-        saveSettingsBtn.textContent = "Saving...";
-        
-        try {
-          // Save the current bold points trigger setting
-          await saveBoldPointsTrigger(currentCommunity, boldPointsTrigger.value);
-          
-          saveSettingsBtn.textContent = "Saved!";
-          setTimeout(() => {
-            saveSettingsBtn.textContent = "Save Settings";
-            saveSettingsBtn.disabled = false;
-          }, 1500);
-        } catch (err) {
-          console.error("Error saving settings:", err);
-          saveSettingsBtn.textContent = "Error - try again";
-          setTimeout(() => {
-            saveSettingsBtn.textContent = "Save Settings";
-            saveSettingsBtn.disabled = false;
-          }, 2000);
-        }
       }
     });
 
@@ -1663,8 +1619,12 @@
           readingsByDate.get(dateKey).set(read.location, read.value);
         });
         
-        // Define the location columns
-        const locationColumns = ['County', 'Kilbreth', 'Hemingway', '1st Avenue', 'DSS across from 21885 Rosehart Way'];
+        // Always use all locations from allLocations, sorted alphabetically
+        // This ensures all locations appear even if they have no data in the filtered results
+        const locationColumns = allLocations
+          .map(loc => loc.name)
+          .filter(name => name) // Filter out any empty names
+          .sort();
         
         // Create rows for each date
         const rows = [];
@@ -1705,24 +1665,11 @@
       doExportBtn.disabled = false;
     });
 
-    // Month selection form
-    monthSelectForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      monthSelectMsg.textContent = "";
-      exportMonthBtn.disabled = true;
 
-      try {
-        const selectedMonth = parseInt(monthSelect.value);
-        await exportDataForMonth(selectedMonth);
-        
-        monthSelectModalCtl.hide();
-        monthSelectMsg.textContent = "";
-      } catch (err) {
-        monthSelectMsg.className = "text-sm text-rose-600";
-        monthSelectMsg.textContent = err.message || "Export failed.";
-      }
-
-      exportMonthBtn.disabled = false;
+    // Update preview when month selection changes
+    monthSelect.addEventListener("change", (e) => {
+      const selectedMonth = parseInt(e.target.value);
+      updateExcelPreview(selectedMonth);
     });
 
     // Email export form
@@ -1764,6 +1711,22 @@
       emailExportModalCtl.hide();
       exportEmail.value = "";
       emailExportMsg.textContent = "";
+    });
+
+    // Download email export
+    downloadEmailExportBtn.addEventListener("click", async () => {
+      try {
+        const now = new Date();
+        const currentMon = now.getMonth();
+        await exportDataForMonth(currentMon);
+        emailExportModalCtl.hide();
+        exportEmail.value = "";
+        emailExportMsg.textContent = "";
+      } catch (err) {
+        console.error("Download failed:", err);
+        emailExportMsg.className = "text-sm text-rose-600";
+        emailExportMsg.textContent = err.message || "Download failed. Please try again.";
+      }
     });
 
     // --- Styled Excel export (xlsx-populate) ---
@@ -1834,12 +1797,13 @@
         horizontalAlignment: "left"
       });
 
-      // Location columns (County, Kilbreth, Hemingway, 1st Avenue, DSS) - right aligned with number formatting
-      const locationColumns = ['County', 'Kilbreth', 'Hemingway', '1st Avenue', 'DSS across from 21885 Rosehart Way'];
+      // Location columns (all columns except Date) - center aligned with number formatting
+      // Dynamically get all location columns by excluding "Date"
+      const locationColumns = headers.filter(h => h !== "Date");
       locationColumns.forEach(locationCol => {
         const idx = colIndex(locationCol);
         if (idx >= 0) sheet.column(START_COL + idx).style({
-          horizontalAlignment: "right",
+          horizontalAlignment: "center",
           numberFormat: "0.00"
         });
       });
@@ -1862,7 +1826,118 @@
       // Set current month as default selection
       const now = new Date();
       monthSelect.value = now.getMonth();
+      // Update preview for the selected month
+      updateExcelPreview(parseInt(monthSelect.value));
       monthSelectModalCtl.show();
+    }
+
+    // Function to generate preview data for selected month
+    function generatePreviewData(selectedMonth) {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      
+      // Get all meter readings for the selected month
+      const monthReads = allDocs.filter(doc => {
+        const docDate = new Date(doc.date);
+        return docDate.getMonth() === selectedMonth && docDate.getFullYear() === currentYear;
+      });
+      
+      // Always use all locations from allLocations, sorted alphabetically
+      // This ensures all locations appear even if they have no data for this month
+      const locationColumns = allLocations
+        .map(loc => loc.name)
+        .filter(name => name) // Filter out any empty names
+        .sort();
+      
+      // Group readings by date
+      const readingsByDate = new Map();
+      monthReads.forEach(read => {
+        const dateKey = read.date.toISOString().slice(0, 10); // YYYY-MM-DD format
+        if (!readingsByDate.has(dateKey)) {
+          readingsByDate.set(dateKey, new Map());
+        }
+        readingsByDate.get(dateKey).set(read.location, read.value);
+      });
+      
+      // Create rows for each day in the month
+      const rows = [];
+      const daysInMonth = new Date(currentYear, selectedMonth + 1, 0).getDate();
+      
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(currentYear, selectedMonth, day);
+        const dateKey = date.toISOString().slice(0, 10);
+        const dayReadings = readingsByDate.get(dateKey) || new Map();
+        
+        const row = {
+          'Date': `${selectedMonth + 1}/${day}/${currentYear}`
+        };
+        
+        // Add values for each location column
+        locationColumns.forEach(location => {
+          row[location] = dayReadings.get(location) || '';
+        });
+        
+        rows.push(row);
+      }
+      
+      return { rows, locationColumns };
+    }
+
+    // Function to update the Excel preview table
+    function updateExcelPreview(selectedMonth) {
+      try {
+        const { rows, locationColumns } = generatePreviewData(selectedMonth);
+        
+        // Get table elements
+        const headerRow = document.getElementById('excelPreviewHeader');
+        const tbody = document.getElementById('excelPreviewBody');
+        
+        // Clear existing content
+        headerRow.innerHTML = '';
+        tbody.innerHTML = '';
+        
+        // Create header row
+        const headerTr = document.createElement('tr');
+        const headers = ['Date', ...locationColumns];
+        headers.forEach(header => {
+          const th = document.createElement('th');
+          th.className = 'px-4 py-2 text-left font-semibold text-xs uppercase tracking-wider';
+          th.textContent = header;
+          headerTr.appendChild(th);
+        });
+        headerRow.appendChild(headerTr);
+        
+        // Create data rows
+        rows.forEach((row, index) => {
+          const tr = document.createElement('tr');
+          tr.className = index % 2 === 0 ? 'bg-white dark:bg-slate-800' : 'bg-slate-50 dark:bg-slate-700';
+          
+          headers.forEach(header => {
+            const td = document.createElement('td');
+            td.className = 'px-4 py-2 text-slate-900 dark:text-slate-100';
+            
+            if (header === 'Date') {
+              td.textContent = row[header];
+              td.className += ' text-left';
+            } else {
+              // Location columns - center aligned, show number or empty
+              const value = row[header];
+              td.textContent = value !== '' ? (typeof value === 'number' ? value.toFixed(2) : value) : '';
+              td.className += ' text-center';
+            }
+            
+            tr.appendChild(td);
+          });
+          
+          tbody.appendChild(tr);
+        });
+        
+      } catch (err) {
+        console.error("Preview update failed:", err);
+        const tbody = document.getElementById('excelPreviewBody');
+        // Use a reasonable default for error display (will be adjusted if we can get location count)
+        tbody.innerHTML = '<tr><td colspan="10" class="px-4 py-2 text-center text-slate-500">Error loading preview</td></tr>';
+      }
     }
 
     async function exportDataForMonth(selectedMonth) {
@@ -1877,6 +1952,13 @@
           return docDate.getMonth() === selectedMonth && docDate.getFullYear() === currentYear;
         });
         
+        // Always use all locations from allLocations, sorted alphabetically
+        // This ensures all locations appear even if they have no data for this month
+        const locationColumns = allLocations
+          .map(loc => loc.name)
+          .filter(name => name) // Filter out any empty names
+          .sort();
+        
         // Group readings by date
         const readingsByDate = new Map();
         monthReads.forEach(read => {
@@ -1886,9 +1968,6 @@
           }
           readingsByDate.get(dateKey).set(read.location, read.value);
         });
-        
-        // Define the location columns based on the image
-        const locationColumns = ['County', 'Kilbreth', 'Hemingway', '1st Avenue', 'DSS across from 21885 Rosehart Way'];
         
         // Create rows for each day in the month
         const rows = [];
@@ -1997,6 +2076,13 @@
           return d.getMonth() === currentMon && d.getFullYear() === currentYear;
         });
 
+        // Always use all locations from allLocations, sorted alphabetically
+        // This ensures all locations appear even if they have no data for this month
+        const locationColumns = allLocations
+          .map(loc => loc.name)
+          .filter(name => name) // Filter out any empty names
+          .sort();
+        
         // Group readings by date
         const readingsByDate = new Map();
         monthReads.forEach(read => {
@@ -2006,9 +2092,6 @@
           }
           readingsByDate.get(dateKey).set(read.location, read.value);
         });
-
-        // Define the location columns
-        const locationColumns = ['County', 'Kilbreth', 'Hemingway', '1st Avenue', 'DSS across from 21885 Rosehart Way'];
         
         // Create rows for each day in the month
         const rows = [];
