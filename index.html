@@ -328,7 +328,7 @@
           </div>
           <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
             <div id="monthSelectMsg" class="text-sm mb-3"></div>
-            <button id="exportDataBtn"
+            <button type="button" id="exportDataBtn"
               class="w-full rounded-2xl bg-emerald-600 px-4 py-3 text-white font-semibold shadow hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-60">
               Export Data
             </button>
@@ -1321,11 +1321,32 @@
       }
     });
 
-    // Export data button event
-    exportDataBtn.addEventListener("click", () => {
-      // Show email export modal
-      emailExportModalCtl.show();
-      setTimeout(() => exportEmail.focus(), 0);
+    // Export data button event - export selected month's data
+    exportDataBtn.addEventListener("click", async () => {
+      try {
+        exportDataBtn.disabled = true;
+        exportDataBtn.textContent = "Exporting...";
+        monthSelectMsg.textContent = "";
+        
+        const selectedMonth = parseInt(monthSelect.value);
+        await exportDataForMonth(selectedMonth);
+        
+        monthSelectMsg.className = "text-sm text-emerald-600";
+        monthSelectMsg.textContent = "Export completed successfully!";
+        
+        // Reset button after a short delay
+        setTimeout(() => {
+          exportDataBtn.disabled = false;
+          exportDataBtn.textContent = "Export Data";
+          monthSelectMsg.textContent = "";
+        }, 2000);
+      } catch (err) {
+        console.error("Export failed:", err);
+        monthSelectMsg.className = "text-sm text-rose-600";
+        monthSelectMsg.textContent = err.message || "Export failed. Please try again.";
+        exportDataBtn.disabled = false;
+        exportDataBtn.textContent = "Export Data";
+      }
     });
 
     // ----- Firestore listeners -----
