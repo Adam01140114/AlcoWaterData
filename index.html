@@ -1109,6 +1109,28 @@
        "residual": "Residual"
      };
 
+     // Helper function to get community name for filenames
+     function getCommunityFilenamePrefix() {
+       if (!currentCommunity) {
+         return "water_meter"; // Default fallback
+       }
+       // Convert community ID to filename-friendly format
+       return currentCommunity.replace(/-/g, "_");
+     }
+
+     // Helper function to get community name for sheet names
+     function getCommunitySheetName() {
+       if (!currentCommunity) {
+         return "MeterReads"; // Default fallback
+       }
+       // Convert community ID to PascalCase sheet name
+       const parts = currentCommunity.split("-");
+       const pascalCase = parts.map(part => 
+         part.charAt(0).toUpperCase() + part.slice(1)
+       ).join("");
+       return `${pascalCase}Reads`;
+     }
+
      // Community switching functions
      function switchToCommunity(communityId) {
        currentCommunity = communityId;
@@ -1754,7 +1776,8 @@
     async function exportStyledXlsx({ rows, filename, title = "Meter Reads" }) {
       const X = window.XlsxPopulate;                         // from the script tag
       const wb = await X.fromBlankAsync();
-      const sheet = wb.sheet(0).name("MeterReads");
+      const sheetName = getCommunitySheetName();
+      const sheet = wb.sheet(0).name(sheetName);
 
       // Build headers from row keys
       const headers = rows.length ? Object.keys(rows[0]) : ["Date","Location","Meter Read"];
@@ -2011,9 +2034,10 @@
           rows.push(row);
         }
 
+        const communityPrefix = getCommunityFilenamePrefix();
         await exportStyledXlsx({
           rows,
-          filename: `water_meter_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`,
+          filename: `${communityPrefix}_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`,
           title: `Water Meter Reads – ${monthName} ${currentYear}`
         });
 
@@ -2060,9 +2084,10 @@
           "UNITS": loc.unit || ""
         }));
 
+        const communityPrefix = getCommunityFilenamePrefix();
         await exportStyledXlsx({
           rows,
-          filename: `water_meter_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`,
+          filename: `${communityPrefix}_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`,
           title: `Water Meter Reads – ${monthName} ${currentYear}`
         });
 
@@ -2138,7 +2163,8 @@
         // Generate Excel file
         const X = window.XlsxPopulate;
         const wb = await X.fromBlankAsync();
-        const sheet = wb.sheet(0).name("MeterReads");
+        const sheetName = getCommunitySheetName();
+        const sheet = wb.sheet(0).name(sheetName);
 
         // Build headers from row keys
         const headers = rows.length ? Object.keys(rows[0]) : ["Date","Location","Meter Read"];
@@ -2168,16 +2194,19 @@
         // Generate file as blob
         const blob = await wb.outputAsync();
         
+        // Get community prefix for filename
+        const communityPrefix = getCommunityFilenamePrefix();
+        
         // Download the file locally first
         const downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = `water_meter_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`;
+        downloadLink.download = `${communityPrefix}_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`;
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
         
         // Upload to Firebase Storage
-        const filename = `water_meter_reads_${monthName.toLowerCase()}_${currentYear}_${Date.now()}.xlsx`;
+        const filename = `${communityPrefix}_reads_${monthName.toLowerCase()}_${currentYear}_${Date.now()}.xlsx`;
         const storageRef = ref(storage, `exports/${filename}`);
         await uploadBytes(storageRef, blob);
         
@@ -2193,7 +2222,7 @@
           month: monthName,
           year: currentYear,
           download_url: downloadURL,
-          filename: `water_meter_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`,
+          filename: `${communityPrefix}_reads_${monthName.toLowerCase()}_${currentYear}.xlsx`,
           reply_to: email,
           from_email: "alcowatertimesheet@gmail.com"
         };
